@@ -13,5 +13,5 @@
 ## 目录：
 
 - 算法
-- [数据库](https://github.com/Amywang1996/LeetCode/tree/master/Database)
+- [数据库](https://github.com/Amywang1996/LeetCode/blob/master/Database/Database.md)
 
