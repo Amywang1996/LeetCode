@@ -12,6 +12,6 @@
 
 ## 目录：
 
-- 算法
+- [算法](https://github.com/Amywang1996/LeetCode/blob/master/Algorithms/Algorithms.md)
 - [数据库](https://github.com/Amywang1996/LeetCode/blob/master/Database/Database.md)
 
