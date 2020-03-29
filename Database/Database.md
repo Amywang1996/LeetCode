@@ -1,5 +1,6 @@
    * [175. 组合两个表](#175-组合两个表)
    * [176. 第二高的薪水](#176-第二高的薪水)
+   * [177. 第N高的薪水](#177. 第N高的薪水)
 
 # 175. 组合两个表
 
@@ -104,5 +105,61 @@ SELECT
 ```sql
 SELECT
 	IFNULL( ( SELECT DISTINCT Salary FROM Employee ORDER BY Salary DESC LIMIT 1 OFFSET 1 ), NULL ) AS SecondHighestSalary
+```
+
+# 177. 第N高的薪水
+
+**题目**
+
+编写一个 SQL 查询，获取 `Employee` 表中第 *n* 高的薪水（Salary）。
+
+```text
++----+--------+
+| Id | Salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+```
+
+例如上述 `Employee` 表，*n = 2* 时，应返回第二高的薪水 `200`。如果不存在第 *n* 高的薪水，那么查询应返回 `null`。
+
+```text
++------------------------+
+| getNthHighestSalary(2) |
++------------------------+
+| 200                    |
++------------------------+
+```
+
+**分析**：
+
+第一步，这道题同176.第二高的薪水，可以说的一样的，只不过是变成了用函数来写，并且第二高变成了变量第n高
+
+第二步，根据limit的特性来说，第n高，偏移量是n-1即跳过前n-1条数，从第n条取并取一条，就是n高的薪水。
+
+第三步，由于limit后面不能有-1或者n-1这样的计算出现，需要在函数前面的begin处声明需要用到的变量。
+
+第四步，由于n是可变的，就需要考虑n的值是否小于1，如果小于1，此时变量n-1小于0逻辑不成立就返回null。
+
+**结论：**
+
+在begin中通过declare声明一个变量，其值为n-1,并对此变量进行判断，小于0，不成立返回null,return部分和题"第二高的薪水"一致。
+
+**sql:**
+
+```sql
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+  declare n int default n-1;
+  if(n<0) then 
+  return null;
+  else
+  RETURN (
+    select ifnull((select distinct(Salary) from employee order by Salary desc limit n,1),null);
+  ); 
+  end if;
+END
 ```
 
