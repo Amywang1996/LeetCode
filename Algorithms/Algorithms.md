@@ -1,4 +1,5 @@
    * [1. 两数之和](#1-两数之和)
+   * [2. 两数相加](#2-两数相加)
 
 # 1. 两数之和
 
@@ -74,3 +75,60 @@ class Solution {
 }
 ```
 
+# 2. 两数相加
+
+<B>题目</B>   
+给出两个 非空 的链表用来表示两个非负的整数。其中，它们各自的位数是按照 逆序 的方式存储的，并且它们的每个节点只能存储 一位 数字。
+
+如果，我们将这两个数相加起来，则会返回一个新的链表来表示它们的和。
+
+您可以假设除了数字 0 之外，这两个数都不会以 0 开头。
+
+示例：
+
+```text
+输入：(2 -> 4 -> 3) + (5 -> 6 -> 4)
+输出：7 -> 0 -> 8
+原因：342 + 465 = 807
+```
+
+<B>分析：</B>  
+第一步：从题目我们知道两个数分别逆序存放在两个链表中，我们所要求的是两个数的和所存到的新的链表。  
+第二步：由于逆序存放，两个链表的头结点存放的都是个位，往后依次类推。  
+第三步：遍历两个链表，并把每个节点的值相加，由于可能存在进位问题，我们需要定义个中间变量来存储这个进位，由于极限情况下9+9+1(1为进位)，因此这个中间变量最大为1。  
+第四步：由于从头结点开始计算，可以定义一个哑结点来简化对头结点是否为空的特殊处理(哑结点是链表中的一个概念，大致意思就是在一个链表的前边添加一个节点，存放位置是数据结点之前，头结点之后。好处就是加入哑结点之后就可以使所有数据结点都有前驱结点，这样就会方便执行链表的一些操作。哑节点的使用可以对代码起到简化作用（省略当函数的入口参数为空时的判断）默认是nul)。  
+第五步：最后对中间变量进行判断，如果等于1，则需要新创建一个值为1的节点，把当前节点的尾指针指向这个新的节点。  
+<B>Java代码：假设m和n分别表示l1和l2的长度，则此算法最多重复max(m,n),故时间复杂度为：O(max(m,n)),空间复杂度为：O(max(m,n)),新列表长度最多为max(m,n)+1</B>  
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode p=l1,q=l2,curr=dummyHead;
+        int carry=0;
+        while(p!=null||q!=null){
+            int x=(p!=null)?p.val:0;
+            int y=(q!=null)?q.val:0;
+            int sum = carry+x+y;
+            carry = sum/10;
+            curr.next = new ListNode(sum%10);
+            curr=curr.next;
+            if(p!=null)p=p.next;
+            if(q!=null)q=q.next;
+        }
+        if(carry>0){
+            curr.next=new ListNode(carry);
+        }
+        return dummyHead.next;
+    }
+  
+}
+```
