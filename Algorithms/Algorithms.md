@@ -132,3 +132,76 @@ class Solution {
   
 }
 ```
+# 3. 无重复字符的最长子串
+<B>题目</B>   
+给定一个字符串 s ，请你找出其中不含有重复字符的 最长子串 的长度。
+示例1：
+
+```text
+输入: s = "abcabcbb"
+输出: 3 
+解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+```
+示例2：
+
+```text
+输入: s = "bbbbb"
+输出: 1
+解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+```
+示例3：
+
+```text
+输入: s = "pwwkew"
+输出: 3
+解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
+     请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+```
+示例4：
+
+```text
+输入: s = ""
+输出: 0
+```
+<B>分析：</B>  
+我们以示例1为例，找字符串abcabcbb的最长字串，我们需要从每一个字符开始的，找不包含重复字符的最长子串，那么其中最长的那个字符串即为答案。
+对于示例一中的字符串，我们列举出这些结果，其中括号中表示选中的字符以及最长的字符串：
+ - 以(a)bcabcbb}(a)bcabcbb开始的最长字符串为(abc)abcbb}(abc)abcbb；
+ - 以a(b)cabcbb}a(b)cabcbb开始的最长字符串为a(bca)bcbb}a(bca)bcbb；
+ - 以b(c)abcbb}ab(c)abcbb开始的最长字符串为ab(cab)cbb}ab(cab)cbb；
+ - 以abc(a)bcbb}abc(a)bcbb 开始的最长字符串为abc(abc)bb}abc(abc)bb；
+ - 以abca(b)cbb}abca(b)cbb 开始的最长字符串为abca(bc)bb}abca(bc)bb；
+ - 以abcab(c)bb}abcab(c)bb 开始的最长字符串为abcab(cb)b}abcab(cb)b；
+ - 以abcabc(b)b}abcabc(b)b 开始的最长字符串为abcabc(b)b}abcabc(b)b；
+ - 以abcabcb(b)}abcabcb(b) 开始的最长字符串为abcabcb(b)}abcabcb(b)。
+观察下来，我们发现如果我们依次递增地枚举子串的起始位置，那么子串的结束位置也是递增的！
+这里的原因在于，假设我们选择字符串中的第k个字符作为起始位置，并且得到了不包含重复字符的最长子串的结束位置为n 
+那么当我们选择第k+1个字符作为起始位置时，首先从k+1到n的字符显然是不重复的，并且由于少了原本的第k个字符，
+我们可以尝试继续增大n直到右侧出现了重复字符为止。我们可以使用滑动窗口来解决这个问题：
+ - 定义两个指针，左指针left:代表枚举字串的初始位置，右指针right:代表不包含重复字符的最长子串的结束位置n
+ - 在每一步的操作中将左指针向右移动一格，表示我们开始枚举下一个字符作为起始位置。移动结束后这个子串就对应以左指针开始的，
+ - 不包含重复字符的最长字串。我们记录下这个子串的长度。
+ - 在枚举结束后，我们找到的最长的子串的长度即为答案。
+ - 在上面的流程中，我们还需要使用一种数据结构来判断 是否有重复的字符Java中用HashSet    
+<B>Java代码1：时间复杂度：O(n);空间复杂度：O(∣Σ∣)）</B>  
+```java
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+      Set<Character> chars=new HashSet<>();
+      //右指针为-1，代表还没移动
+      int right=-1,maxLength=0,n=s.length();
+      for(int i=0;i<n;i++){
+          if(i!=0){
+           // 每次遍历下一个字符时,左指针向右移动一格，移除一个字符
+           chars.remove(s.charAt(i-1));
+          }
+          while(right+1<n&&!chars.contains(s.charAt(right+1))){
+              chars.add(s.charAt(right+1));
+              right++;
+          }
+          maxLength=Math.max(maxLength,right-i+1);
+      }
+         return maxLength;
+    }
+}
+```
