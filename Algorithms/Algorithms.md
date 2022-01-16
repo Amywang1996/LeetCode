@@ -2,7 +2,7 @@
    * [2. 两数相加](#2-两数相加)
    * [3. 无重复字符的最长字串](#3-无重复字符的最长子串)
    * [4. 寻找两个正序数组的中位数](#4-寻找两个正序数组的中位数)
-
+   * [5. 最长回文子串](#5-最长回文子串)
 # 1. 两数之和
 
 <B>题目</B>   
@@ -291,6 +291,129 @@ class Solution {
     }
 }
 ```
+# 5. 最长回文子串
+<B>题目</B>   
+给你一个字符串 s，找到 s 中最长的回文子串。
+示例1：
+```text
+输入：s = "babad"
+输出："bab"
+解释："aba" 同样是符合题意的答案。
+```
+示例2：
+```text
+输入：s = "cbbd"
+输出："bb"
+```
+示例3：
+```text
+输入：s = "a"
+输出："a"
+```
+示例4：
+```text
+输入：s = "ac"
+输出："a"
+```
+示例4：
+- 1 <= s.length <= 1000
+- s 仅由数字和英文字母（大写和/或小写）组成
+<B>分析：</B> 
+第一步：分析题目，给定字符串，要求出最长回文字串(字串(substring):原始字符串的一个连续子集;子序列(subsequence):原始字符串的一个子集)，回文字串就代表该子串正反一致。
+第二步：首先想到的是暴力解法，就是求出所有的回文子串，然后选出最长的字串。时间复杂度O(n^3)过高。
+第三步：通过动态规划算法来解决此问题，时间复杂度只有O(n^2)。动态规划算法的思想：
+如果一个字串是回文串，并且长度大于2，那么它首尾的两个字母去除后，它仍然是个回文串。
+也就是说对于子串s,只有s[i+1:j-1]是回文串，并且s的第i和j个字母相同时，s[i:j]才会是回文串。
+<B>Java代码1：时间复杂度：O(n^3);空间复杂度：O(1)(只用到常数个临时变量)</B>  
+```java
+class Solution {
+    public String longestPalindrome(String s) {
+      int len=s.length();
+      if(len<2){
+          return s;
+      }
+      //默认最大长度1
+      int begin=0,maxLen=1;
+      char[] charArray=s.toCharArray();
+      //枚举所有长度严格大于1的子串charArray[i...j]，最后一个字符没必要枚举了
+      for(int i=0;i<len-1;i++){
+          for(int j=i+1;j<len;j++){
+              if(j-i+1>maxLen&&validPalindromic(charArray,i,j)){
+                  maxLen=j-i+1;
+                  begin=i;
+              }
+          }
+      }
+      return s.substring(begin,begin+maxLen);
+    }
+    /**
+    *校验charArray[left...right]是否是回文串
+    */
+    private boolean validPalindromic(char[] charArray,int left,int right){
+        while(left<right){
+            if(charArray[left]!=charArray[right]){
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
+}
+```
+<B>Java代码2(动态规划算法)：时间复杂度：O(n^3);空间复杂度：O(1)(只用到常数个临时变量)</B>  
+上文的所有讨论是建立在子串长度大于2的前提之上的，我们还需要考虑规划的边界条件，即
+子串的长度为1或2。对于长度为1的子串，它显然是个回文串；对于长度为2的子串，只要它的两个字母相同，它就是个回文串。
+```java
+class Solution {
+    public String longestPalindrome(String s) {
+        int len=s.length();
+        if(len<2){
+            return s;
+        }
+        //最大长度默认为1
+        int begin=0,maxLen=1;
+        // dp[i][j] 表示 s[i..j] 是否是回文串
+        boolean[][] dp = new boolean[len][len];
+        for(int i=0;i<len;i++){
+           dp[i][i]=true;
+        }
+        char[] charArray=s.toCharArray();
+        // 递推开始
+        // 先枚举子串长度,长度从2开始枚举
+        for(int subStrLen=2;subStrLen<=len;subStrLen++){
+            // 枚举左边界，左边界的上限设置可以宽松一些
+            for(int i=0;i<len;i++){
+                //字串长度subStrLen=j-i+1
+                int j=subStrLen+i-1;
+                 // 如果右边界越界，就可以退出当前循环
+                if (j >= len) {
+                    break;
+                }
+                if(charArray[i]!=charArray[j]){
+                    dp[i][j]=false;
+                }else{
+                    // 相等的情况下
+                    // 考虑头尾去掉以后没有字符剩余，或者剩下一个字符的时候，肯定是回文串
+                    if (j - i < 3) {
+                        dp[i][j] = true;
+                    } else {
+                        //状态转移
+                        dp[i][j] = dp[i + 1][j - 1];
+                    }
+                }
+                if(dp[i][j]&&j-i+1>maxLen){
+                    maxLen=j-i+1;
+                    begin=i;
+                }
+            }
+        }
+        return s.substring(begin,begin+maxLen);
+    }
+}
+```
+
+
 
 
 
