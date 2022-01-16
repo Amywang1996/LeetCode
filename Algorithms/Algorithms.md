@@ -3,6 +3,8 @@
    * [3. 无重复字符的最长字串](#3-无重复字符的最长子串)
    * [4. 寻找两个正序数组的中位数](#4-寻找两个正序数组的中位数)
    * [5. 最长回文子串](#5-最长回文子串)
+   * [6. Z字形变换](#6-Z字形变换)
+   
 # 1. 两数之和
 
 <B>题目</B>   
@@ -248,13 +250,13 @@ nums2.length == n
 -106 <= nums1[i], nums2[i] <= 106
 ```
 <B>分析：</B>  
-第一步：分析题目，给定的两个数组是有序的，不为空，同时要求以时间复杂度O(log(m+n))找出中位数。
+第一步：分析题目，给定的两个数组是有序的，不为空，同时要求以时间复杂度O(log(m+n))找出中位数。<br/>
 第二步：不考虑时间复杂度的话，我们可以直接合并两个数组，找出中间数， 如果对时间复杂度的要求有log,
-通常都需要用到二分查找，这道题也可以通过二分查找实现。
-第三位：结合有序数组和中位数，本题相当于是让用二分法来找中位数。
+通常都需要用到二分查找，这道题也可以通过二分查找实现。<br/>
+第三位：结合有序数组和中位数，本题相当于是让用二分法来找中位数。<br/>
 中位数概念：
 中位数（Median）又称中值，统计学中的专有名词，是按顺序排列的一组数据中居于中间位置的数，
-代表一个样本、种群或概率分布中的一个数值，<B>其可将数值集合划分为相等的上下两部分</B>。
+代表一个样本、种群或概率分布中的一个数值，<B>其可将数值集合划分为相等的上下两部分。<br/>
 <B>Java代码：时间复杂度：O(log(min(m,n)));空间复杂度：O(1)</B>  
 ```java
 class Solution {
@@ -315,15 +317,15 @@ class Solution {
 输入：s = "ac"
 输出："a"
 ```
-示例4：
+提示：
 - 1 <= s.length <= 1000
-- s 仅由数字和英文字母（大写和/或小写）组成
-<B>分析：</B> 
-第一步：分析题目，给定字符串，要求出最长回文字串(字串(substring):原始字符串的一个连续子集;子序列(subsequence):原始字符串的一个子集)，回文字串就代表该子串正反一致。
-第二步：首先想到的是暴力解法，就是求出所有的回文子串，然后选出最长的字串。时间复杂度O(n^3)过高。
-第三步：通过动态规划算法来解决此问题，时间复杂度只有O(n^2)。动态规划算法的思想：
+- s 仅由数字和英文字母（大写和/或小写）组成<br/>
+<B>分析：</B> <br/>
+第一步：分析题目，给定字符串，要求出最长回文字串(字串(substring):原始字符串的一个连续子集;子序列(subsequence):原始字符串的一个子集)，回文字串就代表该子串正反一致。<br/>
+第二步：首先想到的是暴力解法，就是求出所有的回文子串，然后选出最长的字串。时间复杂度O(n^3)过高。<br/>
+第三步：通过动态规划算法来解决此问题，时间复杂度只有O(n^2)。动态规划算法的思想：<br/>
 如果一个字串是回文串，并且长度大于2，那么它首尾的两个字母去除后，它仍然是个回文串。
-也就是说对于子串s,只有s[i+1:j-1]是回文串，并且s的第i和j个字母相同时，s[i:j]才会是回文串。
+也就是说对于子串s,只有s[i+1:j-1]是回文串，并且s的第i和j个字母相同时，s[i:j]才会是回文串。<br/>
 <B>Java代码1：时间复杂度：O(n^3);空间复杂度：O(1)(只用到常数个临时变量)</B>  
 ```java
 class Solution {
@@ -412,6 +414,86 @@ class Solution {
     }
 }
 ```
+# 6. Z 字形变换
+<B>题目</B>   
+将一个给定字符串 s 根据给定的行数 numRows ，以从上往下、从左到右进行 Z 字形排列。
+比如输入字符串为 "PAYPALISHIRING" 行数为 3 时，排列如下：
+```text
+P   A   H   N
+A P L S I I G
+Y   I   R
+```
+之后，你的输出需要从左往右逐行读取，产生出一个新的字符串，比如："PAHNAPLSIIGYIR"。
+请你实现这个将字符串进行指定行数变换的函数：
+```text
+string convert(string s, int numRows);
+```
+示例1：
+```text
+输入：s = "PAYPALISHIRING", numRows = 3
+输出："PAHNAPLSIIGYIR"
+```
+示例2：
+```text
+输入：s = "PAYPALISHIRING", numRows = 4
+输出："PINALSIGYAHRPI"
+解释：
+P     I    N
+A   L S  I G
+Y A   H R
+P     I
+```
+示例3：
+```text
+输入：s = "A", numRows = 1
+输出："A"
+```
+提示：
+- 1 <= s.length <= 1000
+- s 由英文字母（小写和大写）、',' 和 '.' 组成
+- 1 <= numRows <= 1000<br/>
+<B>分析：</B>  
+第一步：分析题目，这类图形排布的题目首先需要找规律才能解。<br/>
+第二步：通过给出的例子我们可以看出规律：枚举字符串从0行开始填充数据，直到numRows-1行。
+总共填充了numRows行。每到填充完第0行或者numRows-1行。就开始按行逆序继续填充。
+由于最终让输出的是从左到右从上到下的所有字符组成的新字符串，因此我们可以按行计算出每一行的字符都是什么，
+然后所有行组合在一起即可。<br/>
+第三步：还需要考虑一些特殊情况，如需要输出的行数numRows小于字符长度len的情况(numRows:0,len:1),
+因此组合的图形的行数为min(numRows,s.length())。
+故：我们可以根据numRows和字符串长度计算出图形的行数，并定义一个boolean变量来决定是否需要
+逆序继续填充数据。<br/>
+<B>Java代码：时间复杂度：O(n^2);空间复杂度：O(n^2)</B>  
+```java
+class Solution {
+    public String convert(String s, int numRows) {
+       if(numRows==1){
+           return s;
+       }
+       //定义一个集合存放每行的字符串
+       List<StringBuilder> rows=new ArrayList();
+       for(int i=0;i<Math.min(s.length(),numRows);i++){
+           rows.add(new StringBuilder());
+       }
+       int curRow=0;
+       //定义变量标记是否逆序
+       boolean goingDown=false;
+       for(char c:s.toCharArray()){
+           rows.get(curRow).append(c);
+           //每次到0(首)行和numRows-1(尾)行需要改变方向
+           if(curRow==0||curRow==numRows-1){
+               goingDown=!goingDown;
+           }
+           curRow+=goingDown?1:-1;
+       }
+       StringBuilder ret=new StringBuilder();
+       for(StringBuilder sb:rows){
+           ret.append(sb);
+       }
+       return ret.toString();
+    }
+}
+```
+
 
 
 
